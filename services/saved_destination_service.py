@@ -1,28 +1,8 @@
 from config import supabase
 
 
-SAVED_DESTINATION_FIELDS = """
-    id,
-    user_id,
-    city_id,
-    created_at
-"""
-
-
-CITY_FIELDS = """
-    id,
-    city_name,
-    country,
-    region,
-    latitude,
-    longitude,
-    cost_index,
-    avg_hotel_cost,
-    avg_food_cost,
-    avg_local_transport,
-    popularity_score,
-    image_url
-"""
+SAVED_DESTINATION_FIELDS = "id,user_id,city_id,created_at"
+CITY_FIELDS = "id,city_name,country,region,latitude,longitude,cost_index,avg_hotel_cost,avg_food_cost,avg_local_transport,popularity_score,image_url"
 
 
 # =========================================================
@@ -38,33 +18,39 @@ def save_destination(user_id, city_id):
     # VERIFY CITY EXISTS
     # -----------------------------------------------------
 
-    city_response = (
-        supabase
-        .table("cities")
-        .select("id")
-        .eq("id", str(city_id))
-        .maybe_single()
-        .execute()
-    )
+    try:
+        city_response = (
+            supabase
+            .table("cities")
+            .select("id")
+            .eq("id", str(city_id))
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        return None, "City not found"
 
-    if not city_response.data:
+    if not city_response or not getattr(city_response, "data", None):
         return None, "City not found"
 
     # -----------------------------------------------------
     # DUPLICATE CHECK
     # -----------------------------------------------------
 
-    existing_response = (
-        supabase
-        .table("saved_destinations")
-        .select("id")
-        .eq("user_id", str(user_id))
-        .eq("city_id", str(city_id))
-        .maybe_single()
-        .execute()
-    )
+    try:
+        existing_response = (
+            supabase
+            .table("saved_destinations")
+            .select("id")
+            .eq("user_id", str(user_id))
+            .eq("city_id", str(city_id))
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        existing_response = None
 
-    if existing_response.data:
+    if existing_response and getattr(existing_response, "data", None):
         return None, "Destination is already saved"
 
     # -----------------------------------------------------
@@ -72,7 +58,6 @@ def save_destination(user_id, city_id):
     # -----------------------------------------------------
 
     try:
-
         response = (
             supabase
             .table("saved_destinations")
@@ -82,18 +67,14 @@ def save_destination(user_id, city_id):
             })
             .execute()
         )
-
     except Exception:
-        return None, (
-            "Unable to save destination"
-        )
+        return None, "Unable to save destination"
 
-    if not response.data:
-        return None, (
-            "Unable to save destination"
-        )
+    if not response or not getattr(response, "data", None):
+        return None, "Unable to save destination"
 
-    return response.data[0], None
+    data = response.data[0] if isinstance(response.data, list) else response.data
+    return data, None
 
 
 # =========================================================
@@ -105,26 +86,22 @@ def get_saved_destinations(user_id):
     Return all saved cities of the authenticated user.
     """
 
-    response = (
-        supabase
-        .table("saved_destinations")
-        .select(
-            f"""
-            {SAVED_DESTINATION_FIELDS},
-            cities (
-                {CITY_FIELDS}
+    try:
+        response = (
+            supabase
+            .table("saved_destinations")
+            .select("id,user_id,city_id,created_at,cities(id,city_name,country,region,latitude,longitude,cost_index,avg_hotel_cost,avg_food_cost,avg_local_transport,popularity_score,image_url)")
+            .eq("user_id", str(user_id))
+            .order(
+                "created_at",
+                desc=True
             )
-            """
+            .execute()
         )
-        .eq("user_id", str(user_id))
-        .order(
-            "created_at",
-            desc=True
-        )
-        .execute()
-    )
+        return response.data or []
+    except Exception:
+        return []
 
-    return response.data or []
 
 
 # =========================================================

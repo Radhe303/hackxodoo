@@ -108,20 +108,8 @@ def profile(payload):
         response = (
             supabase
             .table("users")
-            .select(
-                """
-                id,
-                full_name,
-                email,
-                profile_photo,
-                language,
-                role,
-                is_active,
-                email_verified,
-                created_at,
-                updated_at
-                """
-            )
+            .select("id,full_name,email,profile_photo,language,role,is_active,email_verified,created_at,updated_at")
+
             .eq("id", user_id)
             .maybe_single()
             .execute()

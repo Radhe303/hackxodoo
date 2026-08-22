@@ -4,18 +4,8 @@ from datetime import datetime, timezone
 from config import supabase
 
 
-TRIP_FIELDS = """
-    id,
-    user_id,
-    trip_name,
-    description,
-    cover_photo,
-    start_date,
-    end_date,
-    status,
-    visibility,
-    estimated_budget
-"""
+TRIP_FIELDS = "id,user_id,trip_name,description,cover_photo,start_date,end_date,status,visibility,estimated_budget"
+
 
 
 # =========================================================

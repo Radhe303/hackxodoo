@@ -1,19 +1,8 @@
 from config import supabase
 
 
-ACTIVITY_FIELDS = """
-    id,
-    city_id,
-    activity_name,
-    category,
-    description,
-    estimated_cost,
-    duration_hours,
-    rating,
-    image_url,
-    created_at,
-    updated_at
-"""
+ACTIVITY_FIELDS = "id,city_id,activity_name,category,description,estimated_cost,duration_hours,rating,image_url,created_at,updated_at"
+
 
 
 def search_activities(

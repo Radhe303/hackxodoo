@@ -1,18 +1,8 @@
 from config import supabase
 
 
-USER_FIELDS = """
-    id,
-    full_name,
-    email,
-    profile_photo,
-    language,
-    role,
-    is_active,
-    email_verified,
-    created_at,
-    updated_at
-"""
+USER_FIELDS = "id,full_name,email,profile_photo,language,role,is_active,email_verified,created_at,updated_at"
+
 
 
 # =========================================================

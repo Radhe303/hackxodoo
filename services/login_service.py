@@ -44,19 +44,8 @@ def login_user(data):
         response = (
             supabase
             .table("users")
-            .select(
-                """
-                id,
-                full_name,
-                email,
-                password_hash,
-                profile_photo,
-                language,
-                role,
-                is_active,
-                email_verified
-                """
-            )
+            .select("id,full_name,email,password_hash,profile_photo,language,role,is_active,email_verified")
+
             .eq("email", email)
             .maybe_single()
             .execute()
@@ -67,7 +56,7 @@ def login_user(data):
             "message": "Unable to process login request"
         }), 500
 
-    user = response.data
+    user = response.data if response is not None else None
 
     # =====================================================
     # INVALID CREDENTIALS

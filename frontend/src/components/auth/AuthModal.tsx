@@ -42,10 +42,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setErrorMsg('Email and password are required');
         return;
       }
-      if (password.length < 6) {
-        setErrorMsg('Password must be at least 6 characters');
+      if (password.length < 8) {
+        setErrorMsg('Password must be at least 8 characters');
         return;
       }
+
 
       const success = await signup(fullName, email, password);
       if (success) {

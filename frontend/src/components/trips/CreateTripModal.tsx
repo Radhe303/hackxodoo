@@ -54,6 +54,9 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
     tripToEdit?.cover_photo || PRESET_COVERS[0].url
   );
   const [customPhotoUrl, setCustomPhotoUrl] = useState('');
+  const [estimatedBudget, setEstimatedBudget] = useState<number>(
+    tripToEdit?.estimated_budget || 50000
+  );
   const [status, setStatus] = useState<'planning' | 'active' | 'completed' | 'cancelled'>(
     tripToEdit?.status || 'planning'
   );
@@ -93,6 +96,7 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
           end_date: endDate,
           description: description.trim() || null,
           cover_photo: customPhotoUrl.trim() || coverPhoto,
+          estimated_budget: Number(estimatedBudget) || 50000,
           status: status,
           visibility: visibility,
         });
@@ -107,9 +111,13 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
           description: description.trim() || null,
           cover_photo: customPhotoUrl.trim() || coverPhoto,
         });
+        if (newTrip && estimatedBudget) {
+          await updateTrip(newTrip.id, { estimated_budget: Number(estimatedBudget) });
+        }
         showToast('Trip created successfully! Now add stops.', 'success');
         setActiveTrip(newTrip);
       }
+
 
       await refreshTrips();
       onClose();
@@ -198,11 +206,34 @@ export const CreateTripModal: React.FC<CreateTripModalProps> = ({
             </div>
           </div>
 
+          {/* Target Budget Ceiling */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">
+              Target Budget Ceiling (₹ INR)
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-xs text-neutral-400">₹</span>
+              <input
+                type="number"
+                min="0"
+                step="500"
+                value={estimatedBudget}
+                onChange={(e) => setEstimatedBudget(Number(e.target.value))}
+                placeholder="50000"
+                className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 pl-8 pr-4 py-2.5 text-xs font-semibold text-black focus:border-black focus:bg-white focus:outline-none transition-all"
+              />
+            </div>
+            <p className="text-[10px] text-neutral-400 mt-1">
+              Automated financial engine will track expenses, flight/hotel benchmarks, and alert if costs exceed this cap.
+            </p>
+          </div>
+
           {/* Description */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1">
               Trip Description & Notes
             </label>
+
             <textarea
               rows={3}
               value={description}

@@ -28,18 +28,7 @@ def get_dashboard(user_id):
     upcoming_response = (
         supabase
         .table("trips")
-        .select(
-            """
-            id,
-            trip_name,
-            cover_photo,
-            start_date,
-            end_date,
-            status,
-            visibility,
-            estimated_budget
-            """
-        )
+        .select("id,trip_name,cover_photo,start_date,end_date,status,visibility,estimated_budget")
         .eq("user_id", str(user_id))
         .gte("start_date", today)
         .neq("status", "cancelled")
@@ -62,19 +51,7 @@ def get_dashboard(user_id):
     recent_response = (
         supabase
         .table("trips")
-        .select(
-            """
-            id,
-            trip_name,
-            cover_photo,
-            start_date,
-            end_date,
-            status,
-            visibility,
-            estimated_budget,
-            created_at
-            """
-        )
+        .select("id,trip_name,cover_photo,start_date,end_date,status,visibility,estimated_budget,created_at")
         .eq("user_id", str(user_id))
         .order(
             "created_at",
@@ -95,22 +72,7 @@ def get_dashboard(user_id):
     popular_response = (
         supabase
         .table("cities")
-        .select(
-            """
-            id,
-            city_name,
-            country,
-            region,
-            latitude,
-            longitude,
-            cost_index,
-            avg_hotel_cost,
-            avg_food_cost,
-            avg_local_transport,
-            popularity_score,
-            image_url
-            """
-        )
+        .select("id,city_name,country,region,latitude,longitude,cost_index,avg_hotel_cost,avg_food_cost,avg_local_transport,popularity_score,image_url")
         .order(
             "popularity_score",
             desc=True
@@ -130,25 +92,7 @@ def get_dashboard(user_id):
     saved_response = (
         supabase
         .table("saved_destinations")
-        .select(
-            """
-            city_id,
-            cities (
-                id,
-                city_name,
-                country,
-                region,
-                latitude,
-                longitude,
-                cost_index,
-                avg_hotel_cost,
-                avg_food_cost,
-                avg_local_transport,
-                popularity_score,
-                image_url
-            )
-            """
-        )
+        .select("city_id,cities(id,city_name,country,region,latitude,longitude,cost_index,avg_hotel_cost,avg_food_cost,avg_local_transport,popularity_score,image_url)")
         .eq("user_id", str(user_id))
         .order(
             "created_at",
@@ -157,6 +101,7 @@ def get_dashboard(user_id):
         .limit(8)
         .execute()
     )
+
 
     saved_destinations = (
         saved_response.data or []

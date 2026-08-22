@@ -67,7 +67,6 @@ def register_user(data):
     # =====================================================
 
     try:
-
         existing_response = (
             supabase
             .table("users")
@@ -76,16 +75,17 @@ def register_user(data):
             .maybe_single()
             .execute()
         )
-
     except Exception:
         return jsonify({
             "message": "Unable to process registration request"
         }), 500
 
-    if existing_response.data:
-        return jsonify({
-            "message": "An account with this email already exists"
-        }), 409
+    if existing_response is not None:
+        existing_data = getattr(existing_response, "data", existing_response)
+        if existing_data:
+            return jsonify({
+                "message": "An account with this email already exists"
+            }), 409
 
     # =====================================================
     # HASH PASSWORD
@@ -114,25 +114,24 @@ def register_user(data):
     }
 
     try:
-
         response = (
             supabase
             .table("users")
             .insert(user_data)
             .execute()
         )
-
     except Exception:
         return jsonify({
             "message": "Unable to create account"
         }), 500
 
-    if not response.data:
+    if not response or not getattr(response, "data", None):
         return jsonify({
             "message": "Unable to create account"
         }), 500
 
-    user = response.data[0]
+    user = response.data[0] if isinstance(response.data, list) else response.data
+
 
     # =====================================================
     # RESPONSE

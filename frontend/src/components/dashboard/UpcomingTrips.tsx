@@ -114,10 +114,11 @@ export const UpcomingTrips: React.FC<UpcomingTripsProps> = ({
                       <Calendar className="h-3.5 w-3.5 text-neutral-400" />
                       {trip.start_date} → {trip.end_date}
                     </span>
-                    <span className="font-bold text-black">
-                      ₹{trip.estimated_budget?.toLocaleString() || 0}
+                    <span className="font-black text-black">
+                      ₹{((trip.estimated_budget && trip.estimated_budget > 0) ? trip.estimated_budget : Math.round(durationDays * 6500)).toLocaleString()}
                     </span>
                   </div>
+
 
                   {trip.cities_visited && trip.cities_visited.length > 0 && (
                     <div className="flex items-center gap-1 text-[11px] text-neutral-500 truncate pt-1">
@@ -127,6 +128,7 @@ export const UpcomingTrips: React.FC<UpcomingTripsProps> = ({
                       </span>
                     </div>
                   )}
+
                 </div>
               </div>
             );

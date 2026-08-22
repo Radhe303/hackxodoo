@@ -6,8 +6,10 @@ import { Footer } from './components/layout/Footer';
 import { CommandPalette } from './components/layout/CommandPalette';
 import { ToastContainer } from './components/layout/ToastContainer';
 import { AuthModal } from './components/auth/AuthModal';
+import { AuthScreen } from './components/auth/AuthScreen';
 
 // Screens
+
 import { HeroBanner } from './components/dashboard/HeroBanner';
 import { UpcomingTrips } from './components/dashboard/UpcomingTrips';
 import { PopularCities } from './components/dashboard/PopularCities';
@@ -90,9 +92,20 @@ const AppContent: React.FC = () => {
     }
   };
 
+  // Screen 1: If user is not authenticated, display full Register/Login Landing Page
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white text-black font-sans">
+        <AuthScreen />
+        <ToastContainer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white text-black font-sans selection:bg-black selection:text-white">
       {/* Top Navbar */}
+
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}

@@ -8,27 +8,8 @@ from config import supabase
 # FIELD DEFINITIONS
 # =========================================================
 
-STOP_FIELDS = """
-    id,
-    trip_id,
-    city_id,
-    stop_order,
-    arrival_date,
-    departure_date,
-    notes
-"""
-
-ACTIVITY_FIELDS = """
-    id,
-    city_id,
-    activity_name,
-    category,
-    description,
-    estimated_cost,
-    duration_hours,
-    rating,
-    image_url
-"""
+STOP_FIELDS = "id,trip_id,city_id,stop_order,arrival_date,departure_date,notes"
+ACTIVITY_FIELDS = "id,city_id,activity_name,category,description,estimated_cost,duration_hours,rating,image_url"
 
 
 # =========================================================
@@ -43,20 +24,7 @@ def _get_user_trip(trip_id, user_id):
     response = (
         supabase
         .table("trips")
-        .select(
-            """
-            id,
-            user_id,
-            trip_name,
-            description,
-            cover_photo,
-            start_date,
-            end_date,
-            status,
-            visibility,
-            estimated_budget
-            """
-        )
+        .select("id,user_id,trip_name,description,cover_photo,start_date,end_date,status,visibility,estimated_budget")
         .eq("id", str(trip_id))
         .eq("user_id", str(user_id))
         .maybe_single()
@@ -74,35 +42,13 @@ def _get_user_stop(stop_id, user_id):
     response = (
         supabase
         .table("trip_stops")
-        .select(
-            """
-            id,
-            trip_id,
-            city_id,
-            stop_order,
-            arrival_date,
-            departure_date,
-            notes,
-            trips!inner (
-                id,
-                user_id
-            ),
-            cities (
-                id,
-                city_name,
-                country,
-                region,
-                latitude,
-                longitude,
-                image_url
-            )
-            """
-        )
+        .select("id,trip_id,city_id,stop_order,arrival_date,departure_date,notes,trips!inner(id,user_id),cities(id,city_name,country,region,latitude,longitude,image_url)")
         .eq("id", str(stop_id))
         .eq("trips.user_id", str(user_id))
         .maybe_single()
         .execute()
     )
+
 
     return response.data
 

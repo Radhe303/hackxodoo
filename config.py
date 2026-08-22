@@ -11,7 +11,10 @@ load_dotenv()
 # ENVIRONMENT VARIABLES
 # =========================================================
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+if SUPABASE_URL:
+    SUPABASE_URL = SUPABASE_URL.split("/rest/v1")[0].rstrip("/")
+
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -44,7 +47,7 @@ class Config:
 
     FRONTEND_URL = os.getenv(
         "FRONTEND_URL",
-        "http://localhost:3000"
+        "http://localhost:5173"
     )
 
     COOKIE_SECURE = os.getenv(
@@ -62,4 +65,4 @@ class Config:
 supabase: Client = create_client(
     SUPABASE_URL,
     SUPABASE_KEY
-)
+)

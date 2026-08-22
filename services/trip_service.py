@@ -3,31 +3,9 @@ from datetime import date
 from config import supabase
 
 
-TRIP_FIELDS = """
-    id,
-    user_id,
-    trip_name,
-    description,
-    cover_photo,
-    start_date,
-    end_date,
-    status,
-    visibility,
-    estimated_budget,
-    created_at,
-    updated_at
-"""
+TRIP_FIELDS = "id,user_id,trip_name,description,cover_photo,start_date,end_date,status,visibility,estimated_budget,created_at,updated_at"
+STOP_FIELDS = "id,trip_id,city_id,stop_order,arrival_date,departure_date,notes"
 
-
-STOP_FIELDS = """
-    id,
-    trip_id,
-    city_id,
-    stop_order,
-    arrival_date,
-    departure_date,
-    notes
-"""
 
 
 # =========================================================

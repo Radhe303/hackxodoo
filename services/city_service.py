@@ -1,22 +1,8 @@
 from config import supabase
 
 
-CITY_FIELDS = """
-    id,
-    city_name,
-    country,
-    region,
-    latitude,
-    longitude,
-    cost_index,
-    avg_hotel_cost,
-    avg_food_cost,
-    avg_local_transport,
-    popularity_score,
-    image_url,
-    created_at,
-    updated_at
-"""
+CITY_FIELDS = "id,city_name,country,region,latitude,longitude,cost_index,avg_hotel_cost,avg_food_cost,avg_local_transport,popularity_score,image_url,created_at,updated_at"
+
 
 
 def search_cities(

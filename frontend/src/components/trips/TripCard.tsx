@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, DollarSign, MoreVertical, Edit2, Trash2, Share2, Sparkles, Eye } from 'lucide-react';
+import { Calendar, MapPin, DollarSign, MoreVertical, Edit2, Trash2, Share2, Sparkles, Eye, TrendingUp } from 'lucide-react';
 import { Trip } from '../../types';
 
 interface TripCardProps {
@@ -27,6 +27,10 @@ export const TripCard: React.FC<TripCardProps> = ({
     1,
     Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
   );
+
+  const calculatedBudget = (trip.estimated_budget && trip.estimated_budget > 0)
+    ? trip.estimated_budget
+    : Math.round(totalDays * 6500);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -91,19 +95,21 @@ export const TripCard: React.FC<TripCardProps> = ({
         {/* Right Info & Actions */}
         <div className="flex items-center gap-4 self-end sm:self-center">
           <div className="text-right">
-            <p className="text-xs text-neutral-400">Estimated Budget</p>
+            <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider text-[10px]">
+              {trip.estimated_budget && trip.estimated_budget > 0 ? 'Target Budget' : 'Est. Budget'}
+            </p>
             <p className="text-sm font-black text-black">
-              ₹{trip.estimated_budget?.toLocaleString() || 0}
+              ₹{calculatedBudget.toLocaleString()}
             </p>
           </div>
 
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => onSelect(trip)}
-              className="samsung-pill-btn samsung-pill-primary px-3 py-1.5 text-xs font-bold"
+              className="samsung-pill-btn samsung-pill-primary px-3.5 py-1.5 text-xs font-bold"
               title="Open Planner"
             >
-              Open
+              Open Plan
             </button>
 
             <button
@@ -226,6 +232,15 @@ export const TripCard: React.FC<TripCardProps> = ({
             )}
           </div>
 
+          {/* Bottom Left: Budget Badge */}
+          <div className="absolute bottom-3 left-3">
+            <span className="rounded-full bg-black/80 backdrop-blur-md px-2.5 py-1 text-[10px] font-bold text-white border border-neutral-700 shadow-sm flex items-center gap-1">
+              <DollarSign className="h-3 w-3 text-neutral-300" />
+              ₹{calculatedBudget.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Bottom Right: Duration Badge */}
           <div className="absolute bottom-3 right-3">
             <span className="rounded-full bg-white/90 backdrop-blur-md px-2.5 py-1 text-[11px] font-bold text-black shadow-sm">
               {totalDays} Days
@@ -265,10 +280,10 @@ export const TripCard: React.FC<TripCardProps> = ({
       <div className="mt-4 pt-4 border-t border-neutral-100 flex items-center justify-between">
         <div>
           <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block">
-            Budget
+            {trip.estimated_budget && trip.estimated_budget > 0 ? 'Target Budget' : 'Est. Total Budget'}
           </span>
           <span className="text-sm font-black text-black">
-            ₹{trip.estimated_budget?.toLocaleString() || 0}
+            ₹{calculatedBudget.toLocaleString()}
           </span>
         </div>
 
