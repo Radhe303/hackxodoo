@@ -2,7 +2,10 @@ from flask import Flask, jsonify
 
 from config import Config
 from extensions import limiter
+
 from routes.auth import auth_bp
+from routes.cities import cities_bp
+from routes.activities import activities_bp
 
 
 def create_app():
@@ -26,6 +29,8 @@ def create_app():
     # =====================================================
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(cities_bp)
+    app.register_blueprint(activities_bp)
 
     # =====================================================
     # HEALTH CHECK

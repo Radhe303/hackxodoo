@@ -31,14 +31,15 @@ def verify_csrf():
     """
     Verify CSRF token from request header
     against the token stored in the cookie.
-
-    Returns:
-        True  -> valid
-        False -> invalid/missing
     """
 
-    cookie_token = request.cookies.get(CSRF_COOKIE)
-    header_token = request.headers.get(CSRF_HEADER)
+    cookie_token = request.cookies.get(
+        CSRF_COOKIE
+    )
+
+    header_token = request.headers.get(
+        CSRF_HEADER
+    )
 
     if not cookie_token or not header_token:
         return False

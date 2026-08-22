@@ -1,10 +1,22 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import (
+    Blueprint,
+    request,
+    jsonify,
+    make_response,
+    current_app
+)
 
 from extensions import limiter
+
 from utils.jwt_utils import token_required
-from utils.csrf import set_csrf_cookie, verify_csrf
+from utils.csrf import (
+    set_csrf_cookie,
+    verify_csrf
+)
+
 from services.register_service import register_user
 from services.login_service import login_user
+
 from config import supabase
 
 
@@ -37,18 +49,10 @@ def csrf():
 @limiter.limit("5 per minute")
 def register():
 
-    # -----------------------------------------------------
-    # CSRF
-    # -----------------------------------------------------
-
     if not verify_csrf():
         return jsonify({
             "message": "Invalid CSRF token"
         }), 403
-
-    # -----------------------------------------------------
-    # JSON BODY
-    # -----------------------------------------------------
 
     data = request.get_json(silent=True)
 
@@ -68,18 +72,10 @@ def register():
 @limiter.limit("5 per minute")
 def login():
 
-    # -----------------------------------------------------
-    # CSRF
-    # -----------------------------------------------------
-
     if not verify_csrf():
         return jsonify({
             "message": "Invalid CSRF token"
         }), 403
-
-    # -----------------------------------------------------
-    # JSON BODY
-    # -----------------------------------------------------
 
     data = request.get_json(silent=True)
 
@@ -108,6 +104,7 @@ def profile(payload):
         }), 401
 
     try:
+
         response = (
             supabase
             .table("users")
@@ -142,10 +139,6 @@ def profile(payload):
             "message": "User not found"
         }), 404
 
-    # -----------------------------------------------------
-    # ACCOUNT STATUS
-    # -----------------------------------------------------
-
     if not user["is_active"]:
         return jsonify({
             "message": "Account is inactive"
@@ -174,36 +167,21 @@ def profile(payload):
 @token_required
 def logout(payload):
 
-    # -----------------------------------------------------
-    # CSRF
-    # -----------------------------------------------------
-
     if not verify_csrf():
         return jsonify({
             "message": "Invalid CSRF token"
         }), 403
 
-    # -----------------------------------------------------
-    # CURRENT LOGOUT STRATEGY
-    #
-    # JWT is stateless.
-    # Frontend must remove the access token.
-    #
-    # Server-side token revocation will be added later
-    # when refresh-token/session management is implemented.
-    # -----------------------------------------------------
-
     response = make_response(jsonify({
         "message": "Logged out successfully"
     }))
 
-    # Clear CSRF cookie
     response.set_cookie(
         key="csrf_token",
         value="",
         expires=0,
         max_age=0,
-        secure=__import__("flask").current_app.config["COOKIE_SECURE"],
+        secure=current_app.config["COOKIE_SECURE"],
         httponly=False,
         samesite="Lax",
         path="/"

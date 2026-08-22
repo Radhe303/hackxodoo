@@ -19,7 +19,10 @@ def login_user(data):
             "message": "Invalid request body"
         }), 400
 
-    email = data.get("email", "").strip().lower()
+    email = str(
+        data.get("email", "")
+    ).strip().lower()
+
     password = data.get("password", "")
 
     if not email or not password:
@@ -37,6 +40,7 @@ def login_user(data):
     # =====================================================
 
     try:
+
         response = (
             supabase
             .table("users")
@@ -99,7 +103,10 @@ def login_user(data):
         "sub": str(user["id"]),
         "email": user["email"],
         "role": user["role"],
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=15)
+        "exp": (
+            datetime.now(timezone.utc)
+            + timedelta(minutes=15)
+        )
     }
 
     # =====================================================
@@ -107,6 +114,7 @@ def login_user(data):
     # =====================================================
 
     try:
+
         access_token = jwt.encode(
             payload,
             current_app.config["JWT_SECRET_KEY"],
@@ -132,10 +140,6 @@ def login_user(data):
         "is_active": user["is_active"],
         "email_verified": user["email_verified"]
     }
-
-    # =====================================================
-    # FINAL RESPONSE
-    # =====================================================
 
     return jsonify({
         "message": "Login successful",

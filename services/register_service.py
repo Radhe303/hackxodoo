@@ -19,8 +19,14 @@ def register_user(data):
     # GET INPUT
     # =====================================================
 
-    full_name = str(data.get("full_name", "")).strip()
-    email = str(data.get("email", "")).strip().lower()
+    full_name = str(
+        data.get("full_name", "")
+    ).strip()
+
+    email = str(
+        data.get("email", "")
+    ).strip().lower()
+
     password = data.get("password", "")
 
     # =====================================================
@@ -92,12 +98,12 @@ def register_user(data):
     # =====================================================
     # CREATE USER
     #
-    # IMPORTANT:
-    # role is NOT taken from client input.
-    # Database default = user
+    # role is NOT accepted from client.
     #
-    # is_active = TRUE
-    # email_verified = FALSE
+    # Database defaults:
+    # role = user
+    # is_active = true
+    # email_verified = false
     # language = English
     # =====================================================
 
@@ -121,10 +127,6 @@ def register_user(data):
             "message": "Unable to create account"
         }), 500
 
-    # =====================================================
-    # HANDLE INSERT FAILURE
-    # =====================================================
-
     if not response.data:
         return jsonify({
             "message": "Unable to create account"
@@ -134,8 +136,6 @@ def register_user(data):
 
     # =====================================================
     # RESPONSE
-    #
-    # Never return password_hash.
     # =====================================================
 
     return jsonify({

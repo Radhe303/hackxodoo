@@ -8,13 +8,18 @@ load_dotenv()
 
 
 # =========================================================
-# REQUIRED ENVIRONMENT VARIABLES
+# ENVIRONMENT VARIABLES
 # =========================================================
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+
+# =========================================================
+# REQUIRED CONFIGURATION CHECK
+# =========================================================
 
 if not SUPABASE_URL:
     raise RuntimeError("SUPABASE_URL is not configured")
@@ -24,6 +29,9 @@ if not SUPABASE_KEY:
 
 if not JWT_SECRET_KEY:
     raise RuntimeError("JWT_SECRET_KEY is not configured")
+
+if not GEMINI_API_KEY:
+    raise RuntimeError("GEMINI_API_KEY is not configured")
 
 
 # =========================================================
@@ -43,6 +51,8 @@ class Config:
         "COOKIE_SECURE",
         "False"
     ).lower() == "true"
+
+    GEMINI_API_KEY = GEMINI_API_KEY
 
 
 # =========================================================

@@ -30,44 +30,37 @@ def token_required(function):
 
     Requires:
         Authorization: Bearer <access_token>
-
-    Passes decoded JWT payload to the route.
     """
 
     @wraps(function)
     def wrapper(*args, **kwargs):
 
-        auth_header = request.headers.get("Authorization")
-
-        # -------------------------------------------------
-        # Authorization header missing
-        # -------------------------------------------------
+        auth_header = request.headers.get(
+            "Authorization"
+        )
 
         if not auth_header:
             return jsonify({
                 "message": "Authorization token is required"
             }), 401
 
-        # -------------------------------------------------
-        # Validate Bearer format
-        # -------------------------------------------------
-
         parts = auth_header.split()
 
-        if len(parts) != 2 or parts[0].lower() != "bearer":
+        if (
+            len(parts) != 2
+            or parts[0].lower() != "bearer"
+        ):
             return jsonify({
                 "message": "Invalid authorization header"
             }), 401
 
         token = parts[1]
 
-        # -------------------------------------------------
-        # Decode and verify token
-        # -------------------------------------------------
-
         try:
 
-            payload = verify_access_token(token)
+            payload = verify_access_token(
+                token
+            )
 
         except jwt.ExpiredSignatureError:
             return jsonify({
@@ -80,7 +73,7 @@ def token_required(function):
             }), 401
 
         # -------------------------------------------------
-        # Validate required claims
+        # REQUIRED CLAIMS
         # -------------------------------------------------
 
         required_claims = (
@@ -99,13 +92,12 @@ def token_required(function):
             }), 401
 
         # -------------------------------------------------
-        # Validate role
-        # GlobeTrotter roles:
-        #   user
-        #   admin
+        # ROLE VALIDATION
         # -------------------------------------------------
 
-        role = str(payload["role"]).lower()
+        role = str(
+            payload["role"]
+        ).lower()
 
         allowed_roles = {
             "user",
@@ -117,12 +109,7 @@ def token_required(function):
                 "message": "Invalid user role"
             }), 403
 
-        # Keep normalized role in payload
         payload["role"] = role
-
-        # -------------------------------------------------
-        # Pass decoded payload to route
-        # -------------------------------------------------
 
         return function(
             payload,
@@ -139,31 +126,24 @@ def token_required(function):
 
 def role_required(required_role):
     """
-    Restrict a route to a specific role.
+    Restrict route to a specific role.
 
     Example:
 
-        @route(...)
         @token_required
         @role_required("admin")
         def admin_dashboard(payload):
             ...
-
-    GlobeTrotter roles:
-        user
-        admin
     """
 
-    required_role = str(required_role).lower()
+    required_role = str(
+        required_role
+    ).lower()
 
     allowed_roles = {
         "user",
         "admin"
     }
-
-    # -----------------------------------------------------
-    # Validate developer-defined required role
-    # -----------------------------------------------------
 
     if required_role not in allowed_roles:
         raise ValueError(
