@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, app, jsonify
 
 from config import Config
 from extensions import limiter
@@ -6,7 +6,10 @@ from extensions import limiter
 from routes.auth import auth_bp
 from routes.cities import cities_bp
 from routes.activities import activities_bp
-
+from routes.trips import trips_bp
+from routes.itinerary import itinerary_bp
+from routes.transport import transport_bp
+from routes.budget import budget_bp
 
 def create_app():
 
@@ -31,7 +34,10 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(cities_bp)
     app.register_blueprint(activities_bp)
-
+    app.register_blueprint(trips_bp)
+    app.register_blueprint(itinerary_bp)
+    app.register_blueprint(transport_bp)
+    app.register_blueprint(budget_bp)
     # =====================================================
     # HEALTH CHECK
     # =====================================================
