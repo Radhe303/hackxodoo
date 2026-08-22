@@ -8,6 +8,9 @@ from services.itinerary_service import (
     add_activity_to_stop,
     get_stop_itinerary,
     get_trip_itinerary,
+    get_day_wise_itinerary,
+    get_calendar_view,
+    get_timeline_view,
     update_stop_activity,
     remove_activity_from_stop
 )
@@ -24,7 +27,10 @@ itinerary_bp = Blueprint(
 # ADD ACTIVITY TO STOP
 # =========================================================
 
-@itinerary_bp.route("/stops/<uuid:stop_id>/activities", methods=["POST"])
+@itinerary_bp.route(
+    "/stops/<uuid:stop_id>/activities",
+    methods=["POST"]
+)
 @limiter.limit("20 per minute")
 @token_required
 def add_activity(payload, stop_id):
@@ -42,9 +48,6 @@ def add_activity(payload, stop_id):
         }), 400
 
     activity_id = data.get("activity_id")
-    activity_date = data.get("activity_date")
-    activity_time = data.get("activity_time")
-    custom_cost = data.get("custom_cost")
 
     if not activity_id:
         return jsonify({
@@ -52,13 +55,14 @@ def add_activity(payload, stop_id):
         }), 400
 
     try:
+
         result, error = add_activity_to_stop(
             stop_id=str(stop_id),
             user_id=payload["sub"],
             activity_id=activity_id,
-            activity_date=activity_date,
-            activity_time=activity_time,
-            custom_cost=custom_cost
+            activity_date=data.get("activity_date"),
+            activity_time=data.get("activity_time"),
+            custom_cost=data.get("custom_cost")
         )
 
     except Exception:
@@ -67,6 +71,7 @@ def add_activity(payload, stop_id):
         }), 500
 
     if error:
+
         status_code = (
             404
             if error in {
@@ -90,12 +95,16 @@ def add_activity(payload, stop_id):
 # GET STOP ITINERARY
 # =========================================================
 
-@itinerary_bp.route("/stops/<uuid:stop_id>", methods=["GET"])
+@itinerary_bp.route(
+    "/stops/<uuid:stop_id>",
+    methods=["GET"]
+)
 @limiter.limit("30 per minute")
 @token_required
 def stop_itinerary(payload, stop_id):
 
     try:
+
         result, error = get_stop_itinerary(
             stop_id=str(stop_id),
             user_id=payload["sub"]
@@ -121,12 +130,16 @@ def stop_itinerary(payload, stop_id):
 # GET COMPLETE TRIP ITINERARY
 # =========================================================
 
-@itinerary_bp.route("/trips/<uuid:trip_id>", methods=["GET"])
+@itinerary_bp.route(
+    "/trips/<uuid:trip_id>",
+    methods=["GET"]
+)
 @limiter.limit("30 per minute")
 @token_required
 def trip_itinerary(payload, trip_id):
 
     try:
+
         result, error = get_trip_itinerary(
             trip_id=str(trip_id),
             user_id=payload["sub"]
@@ -144,6 +157,111 @@ def trip_itinerary(payload, trip_id):
 
     return jsonify({
         "message": "Trip itinerary fetched successfully",
+        **result
+    }), 200
+
+
+# =========================================================
+# DAY-WISE ITINERARY
+# =========================================================
+
+@itinerary_bp.route(
+    "/trips/<uuid:trip_id>/days",
+    methods=["GET"]
+)
+@limiter.limit("30 per minute")
+@token_required
+def day_wise_itinerary(payload, trip_id):
+
+    try:
+
+        result, error = get_day_wise_itinerary(
+            trip_id=str(trip_id),
+            user_id=payload["sub"]
+        )
+
+    except Exception:
+        return jsonify({
+            "message": "Unable to fetch day-wise itinerary"
+        }), 500
+
+    if error:
+        return jsonify({
+            "message": error
+        }), 404
+
+    return jsonify({
+        "message": "Day-wise itinerary fetched successfully",
+        **result
+    }), 200
+
+
+# =========================================================
+# CALENDAR VIEW
+# =========================================================
+
+@itinerary_bp.route(
+    "/trips/<uuid:trip_id>/calendar",
+    methods=["GET"]
+)
+@limiter.limit("30 per minute")
+@token_required
+def calendar_view(payload, trip_id):
+
+    try:
+
+        result, error = get_calendar_view(
+            trip_id=str(trip_id),
+            user_id=payload["sub"]
+        )
+
+    except Exception:
+        return jsonify({
+            "message": "Unable to fetch calendar view"
+        }), 500
+
+    if error:
+        return jsonify({
+            "message": error
+        }), 404
+
+    return jsonify({
+        "message": "Calendar view fetched successfully",
+        **result
+    }), 200
+
+
+# =========================================================
+# TIMELINE VIEW
+# =========================================================
+
+@itinerary_bp.route(
+    "/trips/<uuid:trip_id>/timeline",
+    methods=["GET"]
+)
+@limiter.limit("30 per minute")
+@token_required
+def timeline_view(payload, trip_id):
+
+    try:
+
+        result, error = get_timeline_view(
+            trip_id=str(trip_id),
+            user_id=payload["sub"]
+        )
+
+    except Exception:
+        return jsonify({
+            "message": "Unable to fetch timeline"
+        }), 500
+
+    if error:
+        return jsonify({
+            "message": error
+        }), 404
+
+    return jsonify({
+        "message": "Timeline fetched successfully",
         **result
     }), 200
 
@@ -173,6 +291,7 @@ def update_activity(payload, stop_activity_id):
         }), 400
 
     try:
+
         result, error = update_stop_activity(
             stop_activity_id=str(stop_activity_id),
             user_id=payload["sub"],
@@ -187,6 +306,7 @@ def update_activity(payload, stop_activity_id):
         }), 500
 
     if error:
+
         status_code = (
             404
             if error == "Itinerary activity not found"
@@ -221,6 +341,7 @@ def remove_activity(payload, stop_activity_id):
         }), 403
 
     try:
+
         success, error = remove_activity_from_stop(
             stop_activity_id=str(stop_activity_id),
             user_id=payload["sub"]
@@ -232,6 +353,7 @@ def remove_activity(payload, stop_activity_id):
         }), 500
 
     if error:
+
         return jsonify({
             "message": error
         }), 404
