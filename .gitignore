@@ -1,0 +1,19 @@
+# Secret Keys & Environment Variables
+.env
+*.env
+
+# Python Virtual Environment & Cache
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Node Modules & Frontend Builds
+node_modules/
+dist/
+build/
+npm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
