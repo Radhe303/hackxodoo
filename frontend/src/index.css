@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f4f4f6;
+    --text-primary: #000000;
+    --text-secondary: #52525b;
+    --border-color: #e4e4e7;
+    --pill-bg: #000000;
+    --pill-text: #ffffff;
+  }
+
+  body {
+    @apply bg-[#ffffff] text-black antialiased font-sans selection:bg-black selection:text-white;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Samsung luxury scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+
+/* Custom interactive pill styling */
+.samsung-pill-btn {
+  @apply inline-flex items-center justify-center font-medium transition-all duration-300 rounded-full select-none active:scale-[0.98];
+}
+
+.samsung-pill-primary {
+  @apply bg-black text-white hover:bg-neutral-800 shadow-sm hover:shadow-md;
+}
+
+.samsung-pill-secondary {
+  @apply bg-neutral-100 text-black hover:bg-neutral-200 border border-neutral-200;
+}
+
+.samsung-pill-outline {
+  @apply border border-neutral-300 bg-white text-black hover:bg-neutral-50 hover:border-black;
+}
+
+.samsung-card {
+  @apply bg-white border border-neutral-200/80 rounded-3xl transition-all duration-300 hover:border-neutral-400 hover:shadow-samsung;
+}
+
+.samsung-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider;
+}
+
+.glass-header {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
